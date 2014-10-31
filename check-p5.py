@@ -54,7 +54,8 @@ github_dict = {
     "molina": "jmartinezmolina",
     "afrutos": "alejandrodefrutos",
     "molina": "jmartinezmolina",
-    "carlos": "CarlosJLoH"
+    "carlos": "CarlosJLoH",
+    "sagun": "caarrieta"
 }
 
 
@@ -63,6 +64,7 @@ files = ['README.md',
          'p5.txt',
          'sip.libpcap.gz',
          'p5.libpcap',
+	 'check-p5.py',
          '.git']
 
 aleatorio = str(int(random.random() * 1000000))
@@ -79,7 +81,7 @@ except OSError:
     print 
     sys.exit()
 
-if len(student_file_list) != 6:
+if len(student_file_list) != len(files):
     error = 1
     print "Error en el número de ficheros encontrados en el repositorio"
 
