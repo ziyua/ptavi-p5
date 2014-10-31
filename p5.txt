@@ -1,0 +1,152 @@
+ Creación de repositorio para la práctica
+
+1. Con el navegador, dirígete al repositorio ptavi-p5 en la cuenta del profesor en GitHub1 y realiza un fork, de manera que consigas tener una copia del repositorio en tu cuenta de GitHub. Clona el repositorio que acabas de crear a local para poder editar los archivos. Trabaja a partir de ahora en ese repositorio, sincronizando los cambios que vayas realizando.
+
+Como tarde al final de la práctica, deberás realizar un push para subir tus cambios a tu repositorio en GitHub. En esta práctica, al contrario que con las demás, se recomienda hacer frecuentes commits, pero el push al final.
+
+================================================================================
+================================================================================
+
+Análisis de una sesión SIP
+
+Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wireshark2. Se pide rellenar las cuestiones que se plantean en este guión en el fichero p5.txt que encontrarás también en el repositorio.
+
+2. Observa que las tramas capturadas corresponden a una sesión SIP con Ekiga, un cliente de VoIP para GNOME. Responde a las siguientes cuestiones:
+ ** ¿Cuántos paquetes componen la captura?
+ ** ¿Cuánto tiempo dura la captura?
+ ** ¿Qué IP tiene la máquina donde se ha efectuado la captura? ¿Se trata de una IP pública o de una IP privada? ¿Por qué lo sabes?
+
+
+3. Antes de analizar las tramas, mira las estadísticas generales que aparecen en el menú de Statistics. En el apartado de jerarquía de protocolos (Protocol Hierarchy) se puede ver el porcentaje del tráfico correspondiente al protocolo TCP y UDP.
+ ** ¿Cuál de los dos es mayor? ¿Es esto consistente con una aplicación que transmite en tiempo real?
+ ** ¿Qué otros protocolos podemos ver en la jerarquía de protocolos?
+
+
+4. Observa por encima el flujo de tramas en el menú de Statistics en IO Graphs. La captura que estamos viendo incluye desde la inicialización (registro) de la aplicación hasta su finalización, con una llamada entremedias.
+ ** Filtra por sip para conocer cuándo se envían paquetes SIP. ¿En qué segundos tienen lugar esos envíos?
+ ** Y los paquetes con RTP, ¿cuándo se envían?
+
+
+
+[Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
+
+5. Analiza las primeras cuatro tramas de la captura nada más arrancar Ekiga.
+ ** ¿Qué servicio es el utilizado en estas tramas?
+ ** ¿Cuál es la dirección IP del servidor de nombres del ordenador que ha lanzado Ekiga?
+ ** ¿Qué dirección IP (de ekiga.net) devuelve el servicio de nombres?
+ ** ¿Por qué se pide también para 35.162.64.86.in-addr.arpa?
+
+
+6. A continuación, hay más de una docena de tramas TCP/HTTP.
+ ** ¿Podrías decir la URL que se está pidiendo?
+ ** ¿Qué user agent (UA) la está pidiendo?
+ ** ¿Qué devuelve el servidor?
+ ** Si lanzamos el navegador web, por ejemplo, Mozilla Firefox, y vamos a la misma URL, ¿qué recibimos? ¿Qué es, entonces, lo que está respondiendo el servidor?
+
+
+7. Hasta la trama 45 se puede observar una secuencia de tramas del protocolo STUN.
+ ** ¿Por qué crees que se hace uso de este protocolo en esta captura? Busca en la Wikipedia.
+ ** ¿Estamos tras un NAT?
+
+
+8. La trama 46 es la primera trama SIP. En un entorno como el de Internet, lo habitual es desconocer la dirección IP de la otra parte al realizar una llamada. Por eso, todo usuario registra su localización en un servidor Registrar. El Registrar guarda información sobre los usuarios en un servidor de localización que puede ser utilizado para localizar usuarios.
+ ** ¿Qué dirección IP tiene el servidor Registrar?
+ ** ¿A qué puerto (del servidor Registrar) se envían los paquetes SIP?
+ ** ¿Qué método SIP utiliza el UA para registrarse?
+ ** Además de REGISTER, ¿qué instrucciones SIP entiende el UA?
+
+
+
+[Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
+
+9. Fijémonos en las tramas siguientes a la número 46:
+ ** ¿Se registra con éxito en el primer intento?
+ ** ¿Cómo sabemos si el registro se ha realizado correctamente o no?
+ ** ¿Podrías identificar las diferencias entre el primer intento y el segundo de registro? (fíjate en el tamaño de los paquetes y mira a qué se debe el cambio)
+ ** ¿Cuánto es el valor del tiempo de expiración de la sesión? Indica las unidades.
+
+
+10. Una vez registrados, podemos efectuar una llamada. Vamos a probar con el servicio de eco de Ekiga que nos permite comprobar si nos hemos conectado correctamente. El servicio de eco tiene la dirección sip:500@ekiga.net. Veamos el INVITE de cerca.
+ ** ¿Puede verse el nombre del que efectúa la llamada, así como su dirección SIP?
+ ** ¿Qué es lo que contiene el cuerpo de la trama? ¿En qué formato/protocolo está?
+ ** ¿Tiene éxito el primer intento? ¿Cómo lo sabes?
+ ** ¿En qué se diferencia el segundo INVITE más abajo del primero? ¿A qué crees que se debe esto?
+
+
+11. Una vez conectado, estudia el intercambio de tramas.
+ ** ¿Qué protocolo(s) se utiliza(n)? ¿Para qué sirven estos protocolos?
+ ** ¿Cuál es el tamaño de paquete de los mismos?
+ ** ¿Se utilizan bits de padding?
+ ** ¿Cuál es la periodicidad de los paquetes que se envían?
+ ** ¿Cuántos bits/segundo estamos enviando?
+
+
+
+[Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
+
+12. Vamos a ver más a fondo el intercambio RTP. En Telephony hay una opción RTP. Empecemos mirando los flujos RTP.
+ ** ¿Cuántos flujos hay? ¿por qué?
+ ** ¿Cuántos paquetes se pierden?
+ ** ¿Cuál es el valor máximo del delta? ¿Y qué es lo que significa el valor de delta?
+ ** ¿Cuáles son los valores de jitter (medio y máximo)? ¿Qué quiere decir eso? ¿Estamos ante una conversación de calidad?
+
+
+13. Elige un paquete RTP de audio. Analiza el flujo de audio en Telephony -> RTP -> Stream Analysis.
+ ** ¿Cuánto valen el delta y el jitter para el primer paquete que ha llegado?
+ ** ¿Podemos saber si éste es el primer paquete que nos han enviado?
+ ** Los valores de jitter son menores de 10ms hasta un paquete dado. ¿Cuál?
+ ** ¿A qué se debe el cambio tan brusco del jitter?
+ ** ¿Es comparable este cambio con el tiempo desde la recepción del paquete anterior? ¿Por qué?
+ ** ¿Cuál es la dependencia entre el tiempo transcurrido desde el paquete anterior y el valor de jitter?
+
+
+14. En Telephony selecciona el menú VoIP calls. Verás que se lista la llamada de voz IP capturada en una ventana emergente. Selecciona esa llamada y pulsa el botón Graph.
+ ** ¿Cuánto dura la conversación?
+ ** ¿Cuáles son sus SSRC? ¿Por qué hay varios SSRCs? ¿Hay CSRCs?
+
+
+15. Identifica la trama donde se finaliza la conversación.
+ ** ¿Qué método SIP se utiliza?
+ ** ¿En qué trama(s)?
+ ** ¿Por qué crees que se envía varias veces?
+
+
+16. Finalmente, se cierra la aplicación de VozIP.
+ ** ¿Por qué aparece una instrucción SIP del tipo REGISTER?
+ ** ¿En qué trama sucede esto?
+ ** ¿En qué se diferencia con la instrucción que se utilizó con anterioridad (al principio de la sesión)?
+
+
+
+[Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
+
+================================================================================
+================================================================================
+
+Captura de una sesión SIP
+
+Captura una sesión SIP de una conversación con el número SIP sip:9999@qxip.net. Tendrás que dar de alta una cuenta en www.ekiga.net con el navegador. Recuerda también que has de comenzar a capturar tramas antes de arrancar Ekiga para ver todo el proceso en el que participa SIP. Para realizar los siguientes ejercicios, deberás crearte una cuenta en ekiga.net y darte de alta la lanzar la aplicación.
+
+17. Observa las diferencias en el inicio de la conversación entre el entorno del laboratorio y el del ejercicio anterior:
+ ** ¿Es necesario el uso de DNS y STUN? ¿Por qué?
+ ** ¿Son diferentes el registro y la descripción de la sesión?
+
+
+18. Identifica las diferencias existentes entre esta conversación y la conversación anterior:
+ ** ¿Cuántos flujos tenemos?
+ ** ¿Cuál es su periodicidad?
+ ** ¿Cuánto es el valor máximo del delta y los valores medios y máximo del jitter?
+ ** ¿Podrías reproducir la conversación desde Wireshark? ¿Cómo? Comprueba que poniendo un valor demasiado pequeño para el buffer de jitter, la conversación puede no tener la calidad necesaria.
+ ** ¿Sabrías decir qué tipo de servicio ofrece sip:9999@qxip.net?
+
+
+
+[Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
+
+19. Filtra por los paquetes SIP de la captura y guarda únicamente los paquetes SIP como sip.libpcap. Abre el fichero guardado para cerciorarte de que lo has hecho bien. Deberás guardarlo en un archivo de nombre p5.libpcap y añadirlo al repositorio.
+
+[Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
+
+[Al terminar la práctica, realiza un push para sincronizar tu repositorio GitHub]
+
+[Recuerda mirar el guión para ver las instrucciones de entrega]
