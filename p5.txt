@@ -13,7 +13,7 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 
 2. Observa que las tramas capturadas corresponden a una sesión SIP con Ekiga, un cliente de VoIP para GNOME. Responde a las siguientes cuestiones:
  ** ¿Cuántos paquetes componen la captura?
- 	954
+ 	  954
  ** ¿Cuánto tiempo dura la captura?
     56.14s
  ** ¿Qué IP tiene la máquina donde se ha efectuado la captura? ¿Se trata de una IP pública o de una IP privada? ¿Por qué lo sabes?
