@@ -18,7 +18,7 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
     56.14s
  ** ¿Qué IP tiene la máquina donde se ha efectuado la captura? ¿Se trata de una IP pública o de una IP privada? ¿Por qué lo sabes?
     192.168.1.34 es una IP privada.
-    IP empieza 192.168.*.*
+    IP 192.168.0.0 - 192.168.255.0 es IP privada.
 
 
 3. Antes de analizar las tramas, mira las estadísticas generales que aparecen en el menú de Statistics. En el apartado de jerarquía de protocolos (Protocol Hierarchy) se puede ver el porcentaje del tráfico correspondiente al protocolo TCP y UDP.
@@ -70,7 +70,7 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 
 8. La trama 46 es la primera trama SIP. En un entorno como el de Internet, lo habitual es desconocer la dirección IP de la otra parte al realizar una llamada. Por eso, todo usuario registra su localización en un servidor Registrar. El Registrar guarda información sobre los usuarios en un servidor de localización que puede ser utilizado para localizar usuarios.
  ** ¿Qué dirección IP tiene el servidor Registrar?
-    grex@ekiga.net
+    IP: 83.36.48.212
  ** ¿A qué puerto (del servidor Registrar) se envían los paquetes SIP?
     5060
  ** ¿Qué método SIP utiliza el UA para registrarse?
@@ -86,7 +86,7 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
     No
  ** ¿Cómo sabemos si el registro se ha realizado correctamente o no?
     si devuelve 'SIP/2.0 401 Unauthorized', no ha realizado correcta, y
-    devuelve 'SIP/2.0 200 OK', ha realizado correcta.
+    si son correcta, deberìa devuelve 'SIP/2.0 200 OK'.
  ** ¿Podrías identificar las diferencias entre el primer intento y el segundo de registro? (fíjate en el tamaño de los paquetes y mira a qué se debe el cambio)
     Differencia es que la secunda añada la información de usario:
         Authorization: Digest username="grex", realm="ekiga.net", nonce="45a439ee7438aaea43ae8c7c2382922187f86c8b", uri="sip:ekiga.net", algorithm=md5, response="5267d4e49d707d4443baefa913e8ff90"
@@ -95,11 +95,12 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 
 10. Una vez registrados, podemos efectuar una llamada. Vamos a probar con el servicio de eco de Ekiga que nos permite comprobar si nos hemos conectado correctamente. El servicio de eco tiene la dirección sip:500@ekiga.net. Veamos el INVITE de cerca.
  ** ¿Puede verse el nombre del que efectúa la llamada, así como su dirección SIP?
-    name: 500; direcciòn: ekiga.net
+    Sì, nombre: 500; direcciòn: ekiga.net
  ** ¿Qué es lo que contiene el cuerpo de la trama? ¿En qué formato/protocolo está?
+    Informacion sobre la session.
     una Session Description Protocol(SDP)
  ** ¿Tiene éxito el primer intento? ¿Cómo lo sabes?
-    No, porque devuelve 'SIP/2.0 407 Proxy Authentication Required'
+    No, porque servidor devuelve 'SIP/2.0 407 Proxy Authentication Required'
  ** ¿En qué se diferencia el segundo INVITE más abajo del primero? ¿A qué crees que se debe esto?
     Añade information de usario:
         Proxy-Authorization: Digest username="grex", realm="ekiga.net", nonce="45a439f6ba5f681cd945fb7c40529fd1e0f28a81", uri="sip:500@ekiga.net", algorithm=md5, response="9a5627c14a8a433bd308d2ec54777240"
@@ -107,14 +108,14 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 11. Una vez conectado, estudia el intercambio de tramas.
  ** ¿Qué protocolo(s) se utiliza(n)? ¿Para qué sirven estos protocolos?
     RTP RTCP 
-    RTP: sirve para transmitir de audio y video en internet.
+    RTP: aquì sirve para transmitir de audio y video en tiempo real.
     RTCP: proporciona informaciòn de control sobre la calidad de la transmisiòn.
  ** ¿Cuál es el tamaño de paquete de los mismos?
     214 bytes
  ** ¿Se utilizan bits de padding?
     No
  ** ¿Cuál es la periodicidad de los paquetes que se envían?
-    RTP: 38.521 packets/sec
+    RTP: 0.25ms cada paquete
  ** ¿Cuántos bits/segundo estamos enviando?
     RTP: 101511.224 bits/sec
 
@@ -134,6 +135,9 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
     Para Audio:
         Maximo Jitter: 119.64ms, Media es 42,50ms
 
+    Retardo entre el periodo de la señal y reloj de PC.
+    promedio unidireccional jitter debe estar dirigida a menos de 30 ms, por lo tanto dos flujos QoS son peores.
+
 
 13. Elige un paquete RTP de audio. Analiza el flujo de audio en Telephony -> RTP -> Stream Analysis.
  ** ¿Cuánto valen el delta y el jitter para el primer paquete que ha llegado?
@@ -141,26 +145,28 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
  ** ¿Podemos saber si éste es el primer paquete que nos han enviado?
     Sì, por valor 'Mark' es 'SET'.
  ** Los valores de jitter son menores de 10ms hasta un paquete dado. ¿Cuál?
-    paquete de 113 a 246
+    paquete de 113 a 246 son menores de 10ms.
  ** ¿A qué se debe el cambio tan brusco del jitter?
-    'Delta' 'Skew' y 'IP BW'.
+    ?>>
  ** ¿Es comparable este cambio con el tiempo desde la recepción del paquete anterior? ¿Por qué?
-    ?>> (comparable?)
+    ?>>
  ** ¿Cuál es la dependencia entre el tiempo transcurrido desde el paquete anterior y el valor de jitter?
-    si delta aumenta, jitter parece más grande.
+    si delta aumenta ò disminuye, jitter aumenta ò disminuye.
 
 
 14. En Telephony selecciona el menú VoIP calls. Verás que se lista la llamada de voz IP capturada en una ventana emergente. Selecciona esa llamada y pulsa el botón Graph.
  ** ¿Cuánto dura la conversación?
     24.8s
  ** ¿Cuáles son sus SSRC? ¿Por qué hay varios SSRCs? ¿Hay CSRCs?
-    ?>> (Gragh?)
+    SSRC = 0xBF4AFD37 o 0x43306582
+    varios flujos, corresponde varios SSRC.
+    No, solo una fuentes, pues no necesita CSRC.
 
 15. Identifica la trama donde se finaliza la conversación.
  ** ¿Qué método SIP se utiliza?
     BYE
  ** ¿En qué trama(s)?
-    tramas: 924 925 926 933
+    tramas: 924 925 926 y 933
  ** ¿Por qué crees que se envía varias veces?
     Por los tres primeros no recibieron ACK.
 
@@ -183,8 +189,7 @@ Captura una sesión SIP de una conversación con el número SIP sip:9999@qxip.ne
 
 17. Observa las diferencias en el inicio de la conversación entre el entorno del laboratorio y el del ejercicio anterior:
  ** ¿Es necesario el uso de DNS y STUN? ¿Por qué?
-    No, Probablemente ya sabe IP, pues no necesita solicitar DNS;
-    o no estamos tras un NET, no necesita plotocol STUN.
+    Si necesita el uso de DNS, pero no necesita plotocol STUN, si no estamos atras net
  ** ¿Son diferentes el registro y la descripción de la sesión?
     Sì, son differentes, es formate de XML de REGISTER, antes son SDP.
 
@@ -194,7 +199,7 @@ Captura una sesión SIP de una conversación con el número SIP sip:9999@qxip.ne
                 2. servidor a cliente, 
     Payload son G.711A audio.
  ** ¿Cuál es su periodicidad?
-    ? >> (periodicidad?)
+    20ms cada paquete
 
 
  ** ¿Cuánto es el valor máximo del delta y los valores medios y máximo del jitter?
