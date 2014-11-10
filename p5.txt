@@ -43,9 +43,9 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
  ** ¿Qué servicio es el utilizado en estas tramas?
     DNS
  ** ¿Cuál es la dirección IP del servidor de nombres del ordenador que ha lanzado Ekiga?
-    86.64.162.35
- ** ¿Qué dirección IP (de ekiga.net) devuelve el servicio de nombres?
     80.58.61.250
+ ** ¿Qué dirección IP (de ekiga.net) devuelve el servicio de nombres?
+    86.64.162.35
  ** ¿Por qué se pide también para 35.162.64.86.in-addr.arpa?
     Equipo local quiere saber nombre de dominio de 86.64.162.35.
 
