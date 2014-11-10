@@ -61,6 +61,7 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
     Recibimos: 193.147.49.92
     es IP public de cliente NAT.
 
+
 7. Hasta la trama 45 se puede observar una secuencia de tramas del protocolo STUN.
  ** ¿Por qué crees que se hace uso de este protocolo en esta captura? Busca en la Wikipedia.
     Clientes NAT encontrar su dirección IP pública y el tipo de NAT en el que se encuentra, y el puerto de Internet asociado con el puerto local a través de NAT.
@@ -93,6 +94,7 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
  ** ¿Cuánto es el valor del tiempo de expiración de la sesión? Indica las unidades.
     3600s = una hora
 
+
 10. Una vez registrados, podemos efectuar una llamada. Vamos a probar con el servicio de eco de Ekiga que nos permite comprobar si nos hemos conectado correctamente. El servicio de eco tiene la dirección sip:500@ekiga.net. Veamos el INVITE de cerca.
  ** ¿Puede verse el nombre del que efectúa la llamada, así como su dirección SIP?
     Sì, nombre: 500; direcciòn: ekiga.net
@@ -104,6 +106,7 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
  ** ¿En qué se diferencia el segundo INVITE más abajo del primero? ¿A qué crees que se debe esto?
     Añade information de usario:
         Proxy-Authorization: Digest username="grex", realm="ekiga.net", nonce="45a439f6ba5f681cd945fb7c40529fd1e0f28a81", uri="sip:500@ekiga.net", algorithm=md5, response="9a5627c14a8a433bd308d2ec54777240"
+
 
 11. Una vez conectado, estudia el intercambio de tramas.
  ** ¿Qué protocolo(s) se utiliza(n)? ¿Para qué sirven estos protocolos?
@@ -134,7 +137,6 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
         Maximo Jitter: 183.10ms, Media es 153.24ms
     Para Audio:
         Maximo Jitter: 119.64ms, Media es 42,50ms
-
     Retardo entre el periodo de la señal y reloj de PC.
     promedio unidireccional jitter debe estar dirigida a menos de 30 ms, por lo tanto dos flujos QoS son peores.
 
@@ -147,9 +149,9 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
  ** Los valores de jitter son menores de 10ms hasta un paquete dado. ¿Cuál?
     paquete de 113 a 246 son menores de 10ms.
  ** ¿A qué se debe el cambio tan brusco del jitter?
-    ?>>
+    Este trama llega mucho màs tarde, Dalta es mayor.
  ** ¿Es comparable este cambio con el tiempo desde la recepción del paquete anterior? ¿Por qué?
-    ?>>
+    No es comparable, porque Dalta cambio mucho y jitter cambio no es tanto.
  ** ¿Cuál es la dependencia entre el tiempo transcurrido desde el paquete anterior y el valor de jitter?
     si delta aumenta ò disminuye, jitter aumenta ò disminuye.
 
@@ -162,6 +164,7 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
     varios flujos, corresponde varios SSRC.
     No, solo una fuentes, pues no necesita CSRC.
 
+
 15. Identifica la trama donde se finaliza la conversación.
  ** ¿Qué método SIP se utiliza?
     BYE
@@ -170,6 +173,7 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
  ** ¿Por qué crees que se envía varias veces?
     Por los tres primeros no recibieron ACK.
 
+
 16. Finalmente, se cierra la aplicación de VozIP.
  ** ¿Por qué aparece una instrucción SIP del tipo REGISTER?
     Para abandonar VozIP.
@@ -177,6 +181,7 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
     Tramas 950 y 952.
  ** ¿En qué se diferencia con la instrucción que se utilizó con anterioridad (al principio de la sesión)?
     Expires igual a 0.
+
 
 [Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
 
@@ -193,6 +198,7 @@ Captura una sesión SIP de una conversación con el número SIP sip:9999@qxip.ne
  ** ¿Son diferentes el registro y la descripción de la sesión?
     Sì, son differentes, es formate de XML de REGISTER, antes son SDP.
 
+
 18. Identifica las diferencias existentes entre esta conversación y la conversación anterior:
  ** ¿Cuántos flujos tenemos?
     Dos flujos, 1. cliente a servidor y 
@@ -200,7 +206,7 @@ Captura una sesión SIP de una conversación con el número SIP sip:9999@qxip.ne
     Payload son G.711A audio.
  ** ¿Cuál es su periodicidad?
     20ms cada paquete
-
+    
 
  ** ¿Cuánto es el valor máximo del delta y los valores medios y máximo del jitter?
     servidor a cliente:   
