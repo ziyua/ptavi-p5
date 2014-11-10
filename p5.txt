@@ -14,8 +14,10 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 2. Observa que las tramas capturadas corresponden a una sesión SIP con Ekiga, un cliente de VoIP para GNOME. Responde a las siguientes cuestiones:
  ** ¿Cuántos paquetes componen la captura?
     954
+    
  ** ¿Cuánto tiempo dura la captura?
     56.14s
+    
  ** ¿Qué IP tiene la máquina donde se ha efectuado la captura? ¿Se trata de una IP pública o de una IP privada? ¿Por qué lo sabes?
     192.168.1.34 es una IP privada.
     IP 192.168.0.0 - 192.168.255.0 es IP privada.
@@ -24,6 +26,7 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 3. Antes de analizar las tramas, mira las estadísticas generales que aparecen en el menú de Statistics. En el apartado de jerarquía de protocolos (Protocol Hierarchy) se puede ver el porcentaje del tráfico correspondiente al protocolo TCP y UDP.
  ** ¿Cuál de los dos es mayor? ¿Es esto consistente con una aplicación que transmite en tiempo real?
     UDP es mayor, sì, consistente con RTP
+    
  ** ¿Qué otros protocolos podemos ver en la jerarquía de protocolos?
     UDP: DNS, STUN, SIP, RTP, RTCP;
     TCP: HTTP, ICMP;
@@ -33,6 +36,7 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 4. Observa por encima el flujo de tramas en el menú de Statistics en IO Graphs. La captura que estamos viendo incluye desde la inicialización (registro) de la aplicación hasta su finalización, con una llamada entremedias.
  ** Filtra por sip para conocer cuándo se envían paquetes SIP. ¿En qué segundos tienen lugar esos envíos?
     7.5s 14.5s 16.3s 38.5s 39.1s 55.7s
+    
  ** Y los paquetes con RTP, ¿cuándo se envían?
     17s - 39s
 
@@ -42,10 +46,13 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 5. Analiza las primeras cuatro tramas de la captura nada más arrancar Ekiga.
  ** ¿Qué servicio es el utilizado en estas tramas?
     DNS
+    
  ** ¿Cuál es la dirección IP del servidor de nombres del ordenador que ha lanzado Ekiga?
     80.58.61.250
+    
  ** ¿Qué dirección IP (de ekiga.net) devuelve el servicio de nombres?
     86.64.162.35
+    
  ** ¿Por qué se pide también para 35.162.64.86.in-addr.arpa?
     Equipo local quiere saber nombre de dominio de 86.64.162.35.
 
@@ -53,10 +60,13 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 6. A continuación, hay más de una docena de tramas TCP/HTTP.
  ** ¿Podrías decir la URL que se está pidiendo?
     http://ekiga.net/ip/
+    
  ** ¿Qué user agent (UA) la está pidiendo?
     Ekiga
+    
  ** ¿Qué devuelve el servidor?
     Cabecera HTTP : 'HTTP/1.1 200 ok ...' y un IP de texto/html: '83.36.46.212'
+    
  ** Si lanzamos el navegador web, por ejemplo, Mozilla Firefox, y vamos a la misma URL, ¿qué recibimos? ¿Qué es, entonces, lo que está respondiendo el servidor?
     Recibimos: 193.147.49.92
     es IP public de cliente NAT.
@@ -65,17 +75,21 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 7. Hasta la trama 45 se puede observar una secuencia de tramas del protocolo STUN.
  ** ¿Por qué crees que se hace uso de este protocolo en esta captura? Busca en la Wikipedia.
     Clientes NAT encontrar su dirección IP pública y el tipo de NAT en el que se encuentra, y el puerto de Internet asociado con el puerto local a través de NAT.
+    
  ** ¿Estamos tras un NAT?
     Sì
 
 
 8. La trama 46 es la primera trama SIP. En un entorno como el de Internet, lo habitual es desconocer la dirección IP de la otra parte al realizar una llamada. Por eso, todo usuario registra su localización en un servidor Registrar. El Registrar guarda información sobre los usuarios en un servidor de localización que puede ser utilizado para localizar usuarios.
  ** ¿Qué dirección IP tiene el servidor Registrar?
-    IP: 83.36.48.212
+    IP: 86.64.162.35
+    
  ** ¿A qué puerto (del servidor Registrar) se envían los paquetes SIP?
     5060
+    
  ** ¿Qué método SIP utiliza el UA para registrarse?
     REGISTER
+    
  ** Además de REGISTER, ¿qué instrucciones SIP entiende el UA?
     INVITE, ACK, OPTIONS, BYE, CANCEL, NOTIFY, REFER, MESSAGE
 
@@ -85,12 +99,15 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 9. Fijémonos en las tramas siguientes a la número 46:
  ** ¿Se registra con éxito en el primer intento?
     No
+    
  ** ¿Cómo sabemos si el registro se ha realizado correctamente o no?
     si devuelve 'SIP/2.0 401 Unauthorized', no ha realizado correcta, y
     si son correcta, deberìa devuelve 'SIP/2.0 200 OK'.
+    
  ** ¿Podrías identificar las diferencias entre el primer intento y el segundo de registro? (fíjate en el tamaño de los paquetes y mira a qué se debe el cambio)
     Differencia es que la secunda añada la información de usario:
         Authorization: Digest username="grex", realm="ekiga.net", nonce="45a439ee7438aaea43ae8c7c2382922187f86c8b", uri="sip:ekiga.net", algorithm=md5, response="5267d4e49d707d4443baefa913e8ff90"
+        
  ** ¿Cuánto es el valor del tiempo de expiración de la sesión? Indica las unidades.
     3600s = una hora
 
@@ -98,11 +115,14 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 10. Una vez registrados, podemos efectuar una llamada. Vamos a probar con el servicio de eco de Ekiga que nos permite comprobar si nos hemos conectado correctamente. El servicio de eco tiene la dirección sip:500@ekiga.net. Veamos el INVITE de cerca.
  ** ¿Puede verse el nombre del que efectúa la llamada, así como su dirección SIP?
     Sì, nombre: 500; direcciòn: ekiga.net
+    
  ** ¿Qué es lo que contiene el cuerpo de la trama? ¿En qué formato/protocolo está?
     Informacion sobre la session.
     una Session Description Protocol(SDP)
+    
  ** ¿Tiene éxito el primer intento? ¿Cómo lo sabes?
     No, porque servidor devuelve 'SIP/2.0 407 Proxy Authentication Required'
+    
  ** ¿En qué se diferencia el segundo INVITE más abajo del primero? ¿A qué crees que se debe esto?
     Añade information de usario:
         Proxy-Authorization: Digest username="grex", realm="ekiga.net", nonce="45a439f6ba5f681cd945fb7c40529fd1e0f28a81", uri="sip:500@ekiga.net", algorithm=md5, response="9a5627c14a8a433bd308d2ec54777240"
@@ -113,12 +133,16 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
     RTP RTCP 
     RTP: aquì sirve para transmitir de audio y video en tiempo real.
     RTCP: proporciona informaciòn de control sobre la calidad de la transmisiòn.
+    
  ** ¿Cuál es el tamaño de paquete de los mismos?
     214 bytes
+    
  ** ¿Se utilizan bits de padding?
     No
+    
  ** ¿Cuál es la periodicidad de los paquetes que se envían?
     RTP: 0.25ms cada paquete
+    
  ** ¿Cuántos bits/segundo estamos enviando?
     RTP: 101511.224 bits/sec
 
@@ -128,10 +152,13 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 12. Vamos a ver más a fondo el intercambio RTP. En Telephony hay una opción RTP. Empecemos mirando los flujos RTP.
  ** ¿Cuántos flujos hay? ¿por qué?
     2 flujo hay, una de audio (G.711A) y una de video (H.261).
+    
  ** ¿Cuántos paquetes se pierden?
     0
+    
  ** ¿Cuál es el valor máximo del delta? ¿Y qué es lo que significa el valor de delta?
     Max Dalta: 1290ms, Delta es intervalo de tiempo de dos paquete.
+    
  ** ¿Cuáles son los valores de jitter (medio y máximo)? ¿Qué quiere decir eso? ¿Estamos ante una conversación de calidad?
     Para Video:
         Maximo Jitter: 183.10ms, Media es 153.24ms
@@ -144,14 +171,19 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 13. Elige un paquete RTP de audio. Analiza el flujo de audio en Telephony -> RTP -> Stream Analysis.
  ** ¿Cuánto valen el delta y el jitter para el primer paquete que ha llegado?
     son 0.
+    
  ** ¿Podemos saber si éste es el primer paquete que nos han enviado?
     Sì, por valor 'Mark' es 'SET'.
+    
  ** Los valores de jitter son menores de 10ms hasta un paquete dado. ¿Cuál?
     paquete de 113 a 246 son menores de 10ms.
+    
  ** ¿A qué se debe el cambio tan brusco del jitter?
     Este trama llega mucho màs tarde, Dalta es mayor.
+    
  ** ¿Es comparable este cambio con el tiempo desde la recepción del paquete anterior? ¿Por qué?
     No es comparable, porque Dalta cambio mucho y jitter cambio no es tanto.
+    
  ** ¿Cuál es la dependencia entre el tiempo transcurrido desde el paquete anterior y el valor de jitter?
     si delta aumenta ò disminuye, jitter aumenta ò disminuye.
 
@@ -159,6 +191,7 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 14. En Telephony selecciona el menú VoIP calls. Verás que se lista la llamada de voz IP capturada en una ventana emergente. Selecciona esa llamada y pulsa el botón Graph.
  ** ¿Cuánto dura la conversación?
     24.8s
+    
  ** ¿Cuáles son sus SSRC? ¿Por qué hay varios SSRCs? ¿Hay CSRCs?
     SSRC = 0xBF4AFD37 o 0x43306582
     varios flujos, corresponde varios SSRC.
@@ -168,8 +201,10 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 15. Identifica la trama donde se finaliza la conversación.
  ** ¿Qué método SIP se utiliza?
     BYE
+    
  ** ¿En qué trama(s)?
     tramas: 924 925 926 y 933
+    
  ** ¿Por qué crees que se envía varias veces?
     Por los tres primeros no recibieron ACK.
 
@@ -177,8 +212,10 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 16. Finalmente, se cierra la aplicación de VozIP.
  ** ¿Por qué aparece una instrucción SIP del tipo REGISTER?
     Para abandonar VozIP.
+    
  ** ¿En qué trama sucede esto?
     Tramas 950 y 952.
+    
  ** ¿En qué se diferencia con la instrucción que se utilizó con anterioridad (al principio de la sesión)?
     Expires igual a 0.
 
@@ -195,6 +232,7 @@ Captura una sesión SIP de una conversación con el número SIP sip:9999@qxip.ne
 17. Observa las diferencias en el inicio de la conversación entre el entorno del laboratorio y el del ejercicio anterior:
  ** ¿Es necesario el uso de DNS y STUN? ¿Por qué?
     Si necesita el uso de DNS, pero no necesita plotocol STUN, si no estamos atras net
+    
  ** ¿Son diferentes el registro y la descripción de la sesión?
     Sì, son differentes, es formate de XML de REGISTER, antes son SDP.
 
@@ -204,6 +242,7 @@ Captura una sesión SIP de una conversación con el número SIP sip:9999@qxip.ne
     Dos flujos, 1. cliente a servidor y 
                 2. servidor a cliente, 
     Payload son G.711A audio.
+    
  ** ¿Cuál es su periodicidad?
     20ms cada paquete
     
@@ -215,8 +254,10 @@ Captura una sesión SIP de una conversación con el número SIP sip:9999@qxip.ne
     cliente a servidor:
         Max Delta: 30.51ms 
         Max Jitter 6,18ms y Mean jitter 4.77ms
+        
  ** ¿Podrías reproducir la conversación desde Wireshark? ¿Cómo? Comprueba que poniendo un valor demasiado pequeño para el buffer de jitter, la conversación puede no tener la calidad necesaria.
     sì, Telephony -> VozIP call -> player -> Decode -> reproducir 
+    
  ** ¿Sabrías decir qué tipo de servicio ofrece sip:9999@qxip.net?
     Musica
 
