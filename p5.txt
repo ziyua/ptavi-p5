@@ -83,62 +83,94 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 
 9. Fijémonos en las tramas siguientes a la número 46:
  ** ¿Se registra con éxito en el primer intento?
+    No
  ** ¿Cómo sabemos si el registro se ha realizado correctamente o no?
+    si devuelve 'SIP/2.0 401 Unauthorized' no es correcta, y
+    devuelve 'SIP/2.0 200 OK' es correcta.
  ** ¿Podrías identificar las diferencias entre el primer intento y el segundo de registro? (fíjate en el tamaño de los paquetes y mira a qué se debe el cambio)
+    Differencia es que la secunda añada la información de usario:
+        Authorization: Digest username="grex", realm="ekiga.net", nonce="45a439ee7438aaea43ae8c7c2382922187f86c8b", uri="sip:ekiga.net", algorithm=md5, response="5267d4e49d707d4443baefa913e8ff90"
  ** ¿Cuánto es el valor del tiempo de expiración de la sesión? Indica las unidades.
-
+    3600s = una hora
 
 10. Una vez registrados, podemos efectuar una llamada. Vamos a probar con el servicio de eco de Ekiga que nos permite comprobar si nos hemos conectado correctamente. El servicio de eco tiene la dirección sip:500@ekiga.net. Veamos el INVITE de cerca.
  ** ¿Puede verse el nombre del que efectúa la llamada, así como su dirección SIP?
+    name: 500; direcciòn: ekiga.net
  ** ¿Qué es lo que contiene el cuerpo de la trama? ¿En qué formato/protocolo está?
+    una Session Description Protocol(SDP)
  ** ¿Tiene éxito el primer intento? ¿Cómo lo sabes?
+    No, porque devuelve 'SIP/2.0 407 Proxy Authentication Required'
  ** ¿En qué se diferencia el segundo INVITE más abajo del primero? ¿A qué crees que se debe esto?
-
+    Añade information de usario:
+        Proxy-Authorization: Digest username="grex", realm="ekiga.net", nonce="45a439f6ba5f681cd945fb7c40529fd1e0f28a81", uri="sip:500@ekiga.net", algorithm=md5, response="9a5627c14a8a433bd308d2ec54777240"
 
 11. Una vez conectado, estudia el intercambio de tramas.
  ** ¿Qué protocolo(s) se utiliza(n)? ¿Para qué sirven estos protocolos?
+    RTP RTCP 
+    RTP: sirve para transmitir de audio y video en internet.
+    RTCP: proporciona informaciòn de control sobre la calidad de la transmisiòn.
  ** ¿Cuál es el tamaño de paquete de los mismos?
+    214 bytes
  ** ¿Se utilizan bits de padding?
+    No
  ** ¿Cuál es la periodicidad de los paquetes que se envían?
+    RTP: 38.521 packets/sec
  ** ¿Cuántos bits/segundo estamos enviando?
-
+    RTP: 101511.224 bits/sec
 
 
 [Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
 
 12. Vamos a ver más a fondo el intercambio RTP. En Telephony hay una opción RTP. Empecemos mirando los flujos RTP.
  ** ¿Cuántos flujos hay? ¿por qué?
+    2 flujo hay, una de audio (G.711A) y una de video (H.261).
  ** ¿Cuántos paquetes se pierden?
+    0
  ** ¿Cuál es el valor máximo del delta? ¿Y qué es lo que significa el valor de delta?
+    Max Dalta: 1290ms, Delta es intervalo de tiempo de dos paquete.
  ** ¿Cuáles son los valores de jitter (medio y máximo)? ¿Qué quiere decir eso? ¿Estamos ante una conversación de calidad?
+    Para Video:
+        Maximo Jitter: 183.10ms, Media es 153.24ms
+    Para Audio:
+        Maximo Jitter: 119.64ms, Media es 42,50ms
 
 
 13. Elige un paquete RTP de audio. Analiza el flujo de audio en Telephony -> RTP -> Stream Analysis.
  ** ¿Cuánto valen el delta y el jitter para el primer paquete que ha llegado?
+    son 0.
  ** ¿Podemos saber si éste es el primer paquete que nos han enviado?
+    Yes, por Mark es SET.
  ** Los valores de jitter son menores de 10ms hasta un paquete dado. ¿Cuál?
+    paquete de 113 a 246
  ** ¿A qué se debe el cambio tan brusco del jitter?
+    Delta Skew y IP BW.
  ** ¿Es comparable este cambio con el tiempo desde la recepción del paquete anterior? ¿Por qué?
+    ?>> (comparable?)
  ** ¿Cuál es la dependencia entre el tiempo transcurrido desde el paquete anterior y el valor de jitter?
+    si delta aumenta, jitter parece más grande.
 
 
 14. En Telephony selecciona el menú VoIP calls. Verás que se lista la llamada de voz IP capturada en una ventana emergente. Selecciona esa llamada y pulsa el botón Graph.
  ** ¿Cuánto dura la conversación?
+    24.8s
  ** ¿Cuáles son sus SSRC? ¿Por qué hay varios SSRCs? ¿Hay CSRCs?
-
+    ?>> (Gragh?)
 
 15. Identifica la trama donde se finaliza la conversación.
  ** ¿Qué método SIP se utiliza?
+    BYE
  ** ¿En qué trama(s)?
+    tramas: 924 925 926 933
  ** ¿Por qué crees que se envía varias veces?
-
+    Por los tres primeros no recibieron ACK.
 
 16. Finalmente, se cierra la aplicación de VozIP.
  ** ¿Por qué aparece una instrucción SIP del tipo REGISTER?
+    Para abandonar VozIP.
  ** ¿En qué trama sucede esto?
+    Tramas 950 y 952.
  ** ¿En qué se diferencia con la instrucción que se utilizó con anterioridad (al principio de la sesión)?
-
-
+    Expires igual a 0.
 
 [Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
 
@@ -151,6 +183,8 @@ Captura una sesión SIP de una conversación con el número SIP sip:9999@qxip.ne
 
 17. Observa las diferencias en el inicio de la conversación entre el entorno del laboratorio y el del ejercicio anterior:
  ** ¿Es necesario el uso de DNS y STUN? ¿Por qué?
+    No, Probablemente ya sabe la IP, no necesita solicitar DNS;
+    o no estamos tras un NET, no no necesita enviar STUN.
  ** ¿Son diferentes el registro y la descripción de la sesión?
 
 
