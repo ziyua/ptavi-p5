@@ -52,31 +52,31 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
 
 6. A continuación, hay más de una docena de tramas TCP/HTTP.
  ** ¿Podrías decir la URL que se está pidiendo?
-     http://ekiga.net/ip/
+    http://ekiga.net/ip/
  ** ¿Qué user agent (UA) la está pidiendo?
-     Ekiga
+    Ekiga
  ** ¿Qué devuelve el servidor?
-     Cabecera HTTP : 'HTTP/1.1 200 ok ...' y un IP de texto/html: '83.36.46.212'
+    Cabecera HTTP : 'HTTP/1.1 200 ok ...' y un IP de texto/html: '83.36.46.212'
  ** Si lanzamos el navegador web, por ejemplo, Mozilla Firefox, y vamos a la misma URL, ¿qué recibimos? ¿Qué es, entonces, lo que está respondiendo el servidor?
-     Recibimos: 193.147.49.92
-     es IP public de cliente NAT.
+    Recibimos: 193.147.49.92
+    es IP public de cliente NAT.
 
 7. Hasta la trama 45 se puede observar una secuencia de tramas del protocolo STUN.
  ** ¿Por qué crees que se hace uso de este protocolo en esta captura? Busca en la Wikipedia.
-     Clientes NAT encontrar su dirección IP pública y el tipo de NAT en el que se encuentra, y el puerto de Internet asociado con el puerto local a través de NAT.
+    Clientes NAT encontrar su dirección IP pública y el tipo de NAT en el que se encuentra, y el puerto de Internet asociado con el puerto local a través de NAT.
  ** ¿Estamos tras un NAT?
-     Sì
+    Sì
 
 
 8. La trama 46 es la primera trama SIP. En un entorno como el de Internet, lo habitual es desconocer la dirección IP de la otra parte al realizar una llamada. Por eso, todo usuario registra su localización en un servidor Registrar. El Registrar guarda información sobre los usuarios en un servidor de localización que puede ser utilizado para localizar usuarios.
  ** ¿Qué dirección IP tiene el servidor Registrar?
-     grex@ekiga.net
+    grex@ekiga.net
  ** ¿A qué puerto (del servidor Registrar) se envían los paquetes SIP?
-     5060
+    5060
  ** ¿Qué método SIP utiliza el UA para registrarse?
-     REGISTER
+    REGISTER
  ** Además de REGISTER, ¿qué instrucciones SIP entiende el UA?
-     INVITE, ACK, OPTIONS, BYE, CANCEL, NOTIFY, REFER, MESSAGE
+    INVITE, ACK, OPTIONS, BYE, CANCEL, NOTIFY, REFER, MESSAGE
 
 
 [Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
@@ -85,8 +85,8 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
  ** ¿Se registra con éxito en el primer intento?
     No
  ** ¿Cómo sabemos si el registro se ha realizado correctamente o no?
-    si devuelve 'SIP/2.0 401 Unauthorized' no es correcta, y
-    devuelve 'SIP/2.0 200 OK' es correcta.
+    si devuelve 'SIP/2.0 401 Unauthorized', no ha realizado correcta, y
+    devuelve 'SIP/2.0 200 OK', ha realizado correcta.
  ** ¿Podrías identificar las diferencias entre el primer intento y el segundo de registro? (fíjate en el tamaño de los paquetes y mira a qué se debe el cambio)
     Differencia es que la secunda añada la información de usario:
         Authorization: Digest username="grex", realm="ekiga.net", nonce="45a439ee7438aaea43ae8c7c2382922187f86c8b", uri="sip:ekiga.net", algorithm=md5, response="5267d4e49d707d4443baefa913e8ff90"
@@ -139,11 +139,11 @@ Se ha capturado una sesión SIP (archivo sip.cap.gz), que se puede abrir con Wir
  ** ¿Cuánto valen el delta y el jitter para el primer paquete que ha llegado?
     son 0.
  ** ¿Podemos saber si éste es el primer paquete que nos han enviado?
-    Yes, por Mark es SET.
+    Sì, por valor 'Mark' es 'SET'.
  ** Los valores de jitter son menores de 10ms hasta un paquete dado. ¿Cuál?
     paquete de 113 a 246
  ** ¿A qué se debe el cambio tan brusco del jitter?
-    Delta Skew y IP BW.
+    'Delta' 'Skew' y 'IP BW'.
  ** ¿Es comparable este cambio con el tiempo desde la recepción del paquete anterior? ¿Por qué?
     ?>> (comparable?)
  ** ¿Cuál es la dependencia entre el tiempo transcurrido desde el paquete anterior y el valor de jitter?
@@ -183,19 +183,31 @@ Captura una sesión SIP de una conversación con el número SIP sip:9999@qxip.ne
 
 17. Observa las diferencias en el inicio de la conversación entre el entorno del laboratorio y el del ejercicio anterior:
  ** ¿Es necesario el uso de DNS y STUN? ¿Por qué?
-    No, Probablemente ya sabe la IP, no necesita solicitar DNS;
-    o no estamos tras un NET, no no necesita enviar STUN.
+    No, Probablemente ya sabe IP, pues no necesita solicitar DNS;
+    o no estamos tras un NET, no necesita plotocol STUN.
  ** ¿Son diferentes el registro y la descripción de la sesión?
-
+    Sì, son differentes, es formate de XML de REGISTER, antes son SDP.
 
 18. Identifica las diferencias existentes entre esta conversación y la conversación anterior:
  ** ¿Cuántos flujos tenemos?
+    Dos flujos, 1. cliente a servidor y 
+                2. servidor a cliente, 
+    Payload son G.711A audio.
  ** ¿Cuál es su periodicidad?
+    ? >> (periodicidad?)
+
+
  ** ¿Cuánto es el valor máximo del delta y los valores medios y máximo del jitter?
+    servidor a cliente:   
+        Max Delta: 30.83ms
+        Max Jitter 6.23ms y Mean jitter 4.81ms
+    cliente a servidor:
+        Max Delta: 30.51ms 
+        Max Jitter 6,18ms y Mean jitter 4.77ms
  ** ¿Podrías reproducir la conversación desde Wireshark? ¿Cómo? Comprueba que poniendo un valor demasiado pequeño para el buffer de jitter, la conversación puede no tener la calidad necesaria.
+    sì, Telephony -> VozIP call -> player -> Decode -> reproducir 
  ** ¿Sabrías decir qué tipo de servicio ofrece sip:9999@qxip.net?
-
-
+    Musica
 
 [Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
 
